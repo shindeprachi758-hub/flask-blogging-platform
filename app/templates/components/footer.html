@@ -1,0 +1,59 @@
+<footer class="footer-custom">
+  <div class="container">
+    <div class="row g-4 mb-4">
+      <div class="col-lg-4 col-md-6">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <span class="brand-icon">
+            <i class="bi bi-journal-richtext"></i>
+          </span>
+          <span class="fs-4 fw-bold text-white">BlogCraft</span>
+        </div>
+        <p class="small text-secondary">
+          A full-stack modern blogging platform engineered with Python Flask, SQLAlchemy, Flask-Login, and Bootstrap 5. Built for developers, thinkers, and writers.
+        </p>
+        <div class="d-flex gap-3 text-secondary fs-5 mt-3">
+          <a href="#" class="text-secondary"><i class="bi bi-github"></i></a>
+          <a href="#" class="text-secondary"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="text-secondary"><i class="bi bi-twitter-x"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-6 col-6">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><a href="{{ url_for('main.index') }}">Home</a></li>
+          <li class="mb-2"><a href="{{ url_for('posts.all_posts') }}">Explore Posts</a></li>
+          <li class="mb-2"><a href="{{ url_for('main.about') }}">About Project</a></li>
+          {% if current_user.is_authenticated %}
+          <li class="mb-2"><a href="{{ url_for('auth.dashboard') }}">Dashboard</a></li>
+          {% else %}
+          <li class="mb-2"><a href="{{ url_for('auth.register') }}">Create Account</a></li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-6 col-6">
+        <h5>Categories</h5>
+        <ul class="list-unstyled small">
+          {% for cat in nav_categories[:5] %}
+          <li class="mb-2">
+            <a href="{{ url_for('posts.category_view', category_id=cat.id) }}">{{ cat.name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <h5>Security & Architecture</h5>
+        <p class="small text-secondary mb-2">
+          Featuring Werkzeug PBKDF2 hashing, Bleach HTML sanitization, and CSRF protection.
+        </p>
+        <div class="badge bg-secondary-subtle text-secondary-emphasis p-2 mt-1">
+          <i class="bi bi-shield-check text-success me-1"></i> OWASP Protected
+        </div>
+      </div>
+    </div>
+    <div class="border-top border-secondary pt-3 d-flex flex-column flex-sm-row justify-content-between align-items-center small text-secondary">
+      <p class="mb-0">&copy; {{ current_year }} BlogCraft. DIY Internship Project (Week 1 – Week 8).</p>
+      <p class="mb-0">Crafted with <i class="bi bi-heart-fill text-danger"></i> & Python Flask.</p>
+    </div>
+  </div>
+</footer>
+

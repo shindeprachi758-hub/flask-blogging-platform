@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% block title %}About BlogCraft - Architecture & Tech Stack{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+
+      <!-- Header -->
+      <div class="text-center mb-5">
+        <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-2 rounded-pill mb-2">
+          DIY Internship Showcase
+        </span>
+        <h1 class="fw-bold display-5 mb-3">About BlogCraft Platform</h1>
+        <p class="lead text-muted">
+          A production-grade blogging platform built in Python Flask demonstrating modular MVC design, secure authentication, relational database management, and modern responsive UI.
+        </p>
+      </div>
+
+      <!-- Overview Card -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-5 bg-white">
+        <h3 class="fw-bold mb-3"><i class="bi bi-bullseye text-primary me-2"></i>Project Objectives</h3>
+        <p class="text-muted">
+          BlogCraft was conceived and engineered across an intensive 8-week software engineering curriculum. The platform solves the fundamental challenges of content management systems: secure multi-user credential storage, resilient relational data associations (one-to-many, many-to-many), sanitized rich-text authoring to mitigate XSS attacks, real-time community commenting, and flexible SQL query filtering.
+        </p>
+
+        <hr class="my-4">
+
+        <h3 class="fw-bold mb-3"><i class="bi bi-stack text-success me-2"></i>Technology Stack</h3>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <h6 class="fw-bold text-dark mb-2"><i class="bi bi-terminal-fill me-2 text-primary"></i>Backend & Database</h6>
+              <ul class="list-unstyled small mb-0 text-muted">
+                <li>• <strong>Python 3.13:</strong> Core programming language</li>
+                <li>• <strong>Flask 3.x:</strong> WSGI framework & application factory</li>
+                <li>• <strong>Flask-SQLAlchemy:</strong> ORM & relational data modeling</li>
+                <li>• <strong>SQLite:</strong> Embedded ACID-compliant database</li>
+                <li>• <strong>Flask-Migrate:</strong> Database schema migration management</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <h6 class="fw-bold text-dark mb-2"><i class="bi bi-palette-fill me-2 text-secondary"></i>Frontend & UX</h6>
+              <ul class="list-unstyled small mb-0 text-muted">
+                <li>• <strong>Bootstrap 5.3:</strong> Responsive grid & components</li>
+                <li>• <strong>Jinja2:</strong> Server-side template inheritance</li>
+                <li>• <strong>Bootstrap Icons:</strong> Modern UI vector iconography</li>
+                <li>• <strong>Quill Editor:</strong> WYSIWYG rich-text authoring</li>
+                <li>• <strong>Vanilla JS:</strong> Dynamic DOM & client-side interactions</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <h6 class="fw-bold text-dark mb-2"><i class="bi bi-shield-lock-fill me-2 text-danger"></i>Security & Defense</h6>
+              <ul class="list-unstyled small mb-0 text-muted">
+                <li>• <strong>Werkzeug Security:</strong> Salted PBKDF2 password hashing</li>
+                <li>• <strong>Flask-WTF:</strong> CSRF tokens on all state changes</li>
+                <li>• <strong>Bleach:</strong> HTML sanitization against XSS injections</li>
+                <li>• <strong>Flask-Login:</strong> Session management & access control</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <h6 class="fw-bold text-dark mb-2"><i class="bi bi-check2-circle me-2 text-info"></i>Quality Assurance</h6>
+              <ul class="list-unstyled small mb-0 text-muted">
+                <li>• <strong>Unittest / Pytest:</strong> Automated test suites</li>
+                <li>• <strong>In-memory SQLite:</strong> Isolated test environments</li>
+                <li>• <strong>Authorization checks:</strong> Owner-only update & delete verification</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <h3 class="fw-bold mb-3"><i class="bi bi-diagram-3 text-warning me-2"></i>Weekly Engineering Milestones</h3>
+        <div class="timeline">
+          <div class="d-flex mb-3">
+            <div class="badge bg-primary me-3 align-self-start py-2 px-3">Week 1</div>
+            <div>
+              <h6 class="fw-bold mb-1">Flask Setup & Application Factory</h6>
+              <p class="small text-muted mb-0">Project initialization, configuration profiles (dev, test, prod), extensions initialization, and Jinja2 base templates.</p>
+            </div>
+          </div>
+          <div class="d-flex mb-3">
+            <div class="badge bg-primary me-3 align-self-start py-2 px-3">Week 2</div>
+            <div>
+              <h6 class="fw-bold mb-1">User Authentication & Sessions</h6>
+              <p class="small text-muted mb-0">Flask-Login integration, secure registration with email validation, login, protected routes, and author dashboards.</p>
+            </div>
+          </div>
+          <div class="d-flex mb-3">
+            <div class="badge bg-primary me-3 align-self-start py-2 px-3">Week 3</div>
+            <div>
+              <h6 class="fw-bold mb-1">Relational Database Models & CRUD</h6>
+              <p class="small text-muted mb-0">Post, Category, Tag models with M2M associations, Flask-WTF forms, full CRUD operations, Quill Rich Text editor, and Bleach HTML sanitization.</p>
+            </div>
+          </div>
+          <div class="d-flex mb-3">
+            <div class="badge bg-primary me-3 align-self-start py-2 px-3">Week 4</div>
+            <div>
+              <h6 class="fw-bold mb-1">Modern UI/UX & Responsive Views</h6>
+              <p class="small text-muted mb-0">Custom CSS design system, responsive navigation, blog cards, category views, author profiles, and 403/404/500 error pages.</p>
+            </div>
+          </div>
+          <div class="d-flex mb-3">
+            <div class="badge bg-primary me-3 align-self-start py-2 px-3">Week 5</div>
+            <div>
+              <h6 class="fw-bold mb-1">Commenting & Community Discussion</h6>
+              <p class="small text-muted mb-0">Relational Comment model, live commenting stream, deletion authorization for authors, and validation.</p>
+            </div>
+          </div>
+          <div class="d-flex mb-3">
+            <div class="badge bg-primary me-3 align-self-start py-2 px-3">Week 6</div>
+            <div>
+              <h6 class="fw-bold mb-1">Full-Text Search, Filtering & Pagination</h6>
+              <p class="small text-muted mb-0">Multi-column keyword search (title + body), category/tag filters, sort orders (newest, oldest, views), and pagination.</p>
+            </div>
+          </div>
+          <div class="d-flex mb-3">
+            <div class="badge bg-primary me-3 align-self-start py-2 px-3">Week 7</div>
+            <div>
+              <h6 class="fw-bold mb-1">Automated Testing & Deployment Readiness</h6>
+              <p class="small text-muted mb-0">Unit & integration tests covering auth, CRUD, comments, search, and security; requirements.txt, .env configuration, and seed automation.</p>
+            </div>
+          </div>
+          <div class="d-flex">
+            <div class="badge bg-primary me-3 align-self-start py-2 px-3">Week 8</div>
+            <div>
+              <h6 class="fw-bold mb-1">Internship Video Script & Evaluation Kit</h6>
+              <p class="small text-muted mb-0">Mentor presentation walkthrough script, screenshots checklist, architecture diagrams, and submission deliverables.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+

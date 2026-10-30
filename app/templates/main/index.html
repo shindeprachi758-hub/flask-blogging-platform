@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% block title %}BlogCraft - Contemporary Perspectives on Tech & Development{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Hero Banner -->
+  <section class="hero-banner p-4 p-md-5 mb-5">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-2 rounded-pill mb-3">
+          <i class="bi bi-stars me-1"></i> Full-Stack Publishing Platform
+        </span>
+        <h1 class="hero-title mb-3">Ideas, Code & Insights for Modern Engineers</h1>
+        <p class="hero-subtitle mb-4">
+          Explore architectural deep dives, Python Flask tutorials, security practices, and practical guides curated for aspiring full-stack engineers.
+        </p>
+
+        <!-- Search Bar within Hero -->
+        <form action="{{ url_for('posts.all_posts') }}" method="GET" class="col-md-9 mb-4">
+          <div class="input-group input-group-lg bg-white p-1 rounded-pill shadow-sm">
+            <span class="input-group-text bg-transparent border-0 ps-3">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text" name="q" class="form-control border-0 shadow-none px-2" placeholder="Search topics, tutorials, or keywords...">
+            <button class="btn btn-primary-custom rounded-pill px-4" type="submit">Search</button>
+          </div>
+        </form>
+
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{{ url_for('posts.all_posts') }}" class="btn btn-primary-custom">
+            <i class="bi bi-collection me-1"></i> Browse All Articles
+          </a>
+          {% if not current_user.is_authenticated %}
+          <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light">
+            <i class="bi bi-pencil-square me-1"></i> Start Writing
+          </a>
+          {% else %}
+          <a href="{{ url_for('posts.create') }}" class="btn btn-outline-light">
+            <i class="bi bi-plus-circle me-1"></i> Create New Post
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-4 d-none d-lg-block text-center">
+        <div class="p-4 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-25 shadow">
+          <div class="fs-1 text-info mb-2"><i class="bi bi-layers-half"></i></div>
+          <h4 class="text-white fw-bold mb-1">{{ total_posts }} Articles</h4>
+          <p class="text-white-50 small mb-3">Published across {{ total_categories }} distinct technical domains</p>
+          <div class="d-flex justify-content-center gap-2">
+            <span class="badge bg-light text-dark"><i class="bi bi-shield-check text-success me-1"></i> CSRF Safe</span>
+            <span class="badge bg-light text-dark"><i class="bi bi-code-slash text-primary me-1"></i> Flask 3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Spotlight Post -->
+  {% if featured_post %}
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="fw-bold mb-0">
+        <i class="bi bi-fire text-danger me-2"></i>Featured Story
+      </h3>
+      <span class="text-muted small">Most Viewed & Discussed</span>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+      <div class="row g-0">
+        <div class="col-lg-7 p-4 p-md-5 d-flex flex-column justify-content-center">
+          <div class="d-flex gap-2 align-items-center mb-2">
+            {% if featured_post.category %}
+            <a href="{{ url_for('posts.category_view', category_id=featured_post.category.id) }}" class="badge-category text-decoration-none">
+              <i class="bi bi-folder-fill me-1"></i> {{ featured_post.category.name }}
+            </a>
+            {% endif %}
+            <span class="text-muted small"><i class="bi bi-clock me-1"></i> {{ featured_post.reading_time }} min read</span>
+          </div>
+          <h2 class="fw-bold h2 mb-3">
+            <a href="{{ url_for('posts.detail', post_id=featured_post.id) }}" class="text-dark text-decoration-none">
+              {{ featured_post.title }}
+            </a>
+          </h2>
+          <p class="text-muted mb-4 lead fs-6">
+            {% if featured_post.summary %}
+              {{ featured_post.summary }}
+            {% else %}
+              {{ (featured_post.content | striptags)[:180] }}...
+            {% endif %}
+          </p>
+          <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+            <div class="author-chip">
+              <img src="{{ featured_post.author.avatar(40) }}" alt="{{ featured_post.author.username }}" class="author-avatar-sm" style="width:40px;height:40px;">
+              <div>
+                <a href="{{ url_for('auth.author_profile', username=featured_post.author.username) }}" class="text-dark fw-bold text-decoration-none">
+                  {{ featured_post.author.username }}
+                </a>
+                <div class="text-muted small">{{ featured_post.created_at | format_date }}</div>
+              </div>
+            </div>
+            <a href="{{ url_for('posts.detail', post_id=featured_post.id) }}" class="btn btn-sm btn-outline-custom">
+              Read Story &rarr;
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-5 bg-light d-flex align-items-center justify-content-center p-4 border-start">
+          <div class="text-center p-4">
+            <div class="display-3 text-primary mb-3">
+              <i class="bi bi-newspaper"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Technical Deep Dive</h5>
+            <p class="text-muted small mb-0">Join {{ featured_post.views }} readers and explore this article's takeaways and community comments.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Categories Highlights -->
+  {% if categories %}
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="fw-bold mb-0">
+        <i class="bi bi-grid-fill text-primary me-2"></i>Explore Categories
+      </h3>
+      <a href="{{ url_for('posts.all_posts') }}" class="text-decoration-none small fw-semibold">View all &rarr;</a>
+    </div>
+
+    <div class="row g-3">
+      {% for cat in categories %}
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <a href="{{ url_for('posts.category_view', category_id=cat.id) }}" class="text-decoration-none">
+          <div class="card h-100 border-0 shadow-sm p-3 rounded-3 bg-white text-dark hover-card">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge bg-primary-subtle text-primary p-2 rounded-2">
+                <i class="bi bi-folder2 fs-5"></i>
+              </span>
+              <span class="badge bg-light text-muted border">{{ cat.posts.count() }} posts</span>
+            </div>
+            <h6 class="fw-bold mb-1">{{ cat.name }}</h6>
+            <p class="text-muted small mb-0">{{ cat.description or 'Explore posts in this domain.' }}</p>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Recent Articles -->
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="fw-bold mb-1">
+          <i class="bi bi-clock-history text-success me-2"></i>Latest Publications
+        </h3>
+        <p class="text-muted small mb-0">Fresh engineering perspectives straight from the developer community</p>
+      </div>
+      <a href="{{ url_for('posts.all_posts') }}" class="btn btn-sm btn-outline-custom">
+        All Articles &rarr;
+      </a>
+    </div>
+
+    {% if recent_posts %}
+    <div class="row g-4">
+      {% for post in recent_posts %}
+        {% include 'components/post_card.html' %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 bg-white rounded-3 border">
+      <i class="bi bi-journal-x fs-1 text-muted mb-2"></i>
+      <h5>No posts published yet.</h5>
+      <p class="text-muted small mb-3">Be the very first developer to share your thoughts!</p>
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('posts.create') }}" class="btn btn-primary-custom">Write First Post</a>
+      {% else %}
+      <a href="{{ url_for('auth.login') }}" class="btn btn-primary-custom">Sign in to Write</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </section>
+
+  <!-- Popular Tags Cloud -->
+  {% if popular_tags %}
+  <section class="p-4 bg-white rounded-4 border shadow-sm">
+    <h5 class="fw-bold mb-3">
+      <i class="bi bi-hash text-secondary me-1"></i>Trending Tags
+    </h5>
+    <div class="d-flex flex-wrap gap-2">
+      {% for tag in popular_tags %}
+      <a href="{{ url_for('posts.tag_view', name=tag.name) }}" class="badge-tag py-2 px-3 fs-6">
+        #{{ tag.name }} <span class="text-muted ms-1">({{ tag.posts.count() }})</span>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+</div>
+{% endblock %}
+

@@ -1,0 +1,119 @@
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="{{ url_for('main.index') }}">
+      <span class="brand-icon">
+        <i class="bi bi-journal-richtext"></i>
+      </span>
+      <span>BlogCraft</span>
+    </a>
+    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="bi bi-list fs-2 text-dark"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+        <li class="nav-item">
+          <a class="nav-link {{ 'active' if request.endpoint == 'main.index' }}" href="{{ url_for('main.index') }}">
+            <i class="bi bi-house-door me-1"></i> Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ 'active' if request.endpoint == 'posts.all_posts' }}" href="{{ url_for('posts.all_posts') }}">
+            <i class="bi bi-grid me-1"></i> Explore Posts
+          </a>
+        </li>
+        {% if nav_categories %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-folder2-open me-1"></i> Categories
+          </a>
+          <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="categoriesDropdown">
+            {% for cat in nav_categories %}
+            <li>
+              <a class="dropdown-item py-2" href="{{ url_for('posts.category_view', category_id=cat.id) }}">
+                {{ cat.name }}
+              </a>
+            </li>
+            {% endfor %}
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item py-2 text-primary" href="{{ url_for('posts.all_posts') }}">
+                View All Categories &rarr;
+              </a>
+            </li>
+          </ul>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link {{ 'active' if request.endpoint == 'main.about' }}" href="{{ url_for('main.about') }}">
+            <i class="bi bi-info-circle me-1"></i> About
+          </a>
+        </li>
+      </ul>
+
+      <!-- Quick Search Bar in Navbar -->
+      <form class="d-flex me-lg-3 my-2 my-lg-0" action="{{ url_for('posts.all_posts') }}" method="GET">
+        <div class="input-group input-group-sm">
+          <input class="form-control bg-light" type="search" name="q" placeholder="Search articles..." value="{{ request.args.get('q', '') }}" aria-label="Search">
+          <button class="btn btn-outline-secondary" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </form>
+
+      <!-- Auth Controls -->
+      <ul class="navbar-nav align-items-lg-center">
+        {% if current_user.is_authenticated %}
+        <li class="nav-item me-2">
+          <a class="btn btn-sm btn-primary-custom" href="{{ url_for('posts.create') }}">
+            <i class="bi bi-pencil-square me-1"></i> Write Post
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="{{ current_user.avatar(32) }}" alt="{{ current_user.username }}" class="author-avatar-sm">
+            <span class="d-none d-lg-inline">{{ current_user.username }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end border-0 shadow-md" aria-labelledby="userMenu">
+            <li>
+              <h6 class="dropdown-header">Signed in as <strong>{{ current_user.username }}</strong></h6>
+            </li>
+            <li>
+              <a class="dropdown-item py-2" href="{{ url_for('auth.dashboard') }}">
+                <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item py-2" href="{{ url_for('auth.profile') }}">
+                <i class="bi bi-person-gear me-2 text-secondary"></i> Edit Profile
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item py-2" href="{{ url_for('posts.new_category') }}">
+                <i class="bi bi-folder-plus me-2 text-success"></i> New Category
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item py-2 text-danger" href="{{ url_for('auth.logout') }}">
+                <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+              </a>
+            </li>
+          </ul>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('auth.login') }}">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+          </a>
+        </li>
+        <li class="nav-item ms-lg-2">
+          <a class="btn btn-sm btn-primary-custom" href="{{ url_for('auth.register') }}">
+            Get Started
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+

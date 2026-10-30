@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}Explore Articles - BlogCraft{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <h2 class="fw-bold mb-1">Explore Articles</h2>
+      <p class="text-muted small mb-0">Browse through our entire library of engineering tutorials and perspectives.</p>
+    </div>
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('posts.create') }}" class="btn btn-primary-custom">
+      <i class="bi bi-pencil-square me-1"></i> Write New Article
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- Filter & Search Controls Card -->
+  <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 bg-white">
+    <form method="GET" action="{{ url_for('posts.all_posts') }}">
+      <div class="row g-3 align-items-center">
+
+        <!-- Search Input -->
+        <div class="col-lg-5 col-md-12">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text" name="q" class="form-control border-start-0" placeholder="Search by title or content..." value="{{ search_query }}">
+          </div>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="col-lg-3 col-md-6 col-sm-6">
+          <select name="category" class="form-select">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {{ 'selected' if selected_category and selected_category.id == cat.id }}>
+              {{ cat.name }} ({{ cat.posts.count() }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Sort Dropdown -->
+        <div class="col-lg-2 col-md-6 col-sm-6">
+          <select name="sort" class="form-select">
+            <option value="newest" {{ 'selected' if sort_by == 'newest' }}>Newest First</option>
+            <option value="oldest" {{ 'selected' if sort_by == 'oldest' }}>Oldest First</option>
+            <option value="views" {{ 'selected' if sort_by == 'views' }}>Most Popular</option>
+          </select>
+        </div>
+
+        <!-- Submit & Clear Buttons -->
+        <div class="col-lg-2 col-md-12 d-flex gap-2">
+          <button type="submit" class="btn btn-primary-custom flex-grow-1">Filter</button>
+          {% if search_query or selected_category or selected_tag or sort_by != 'newest' %}
+          <a href="{{ url_for('posts.all_posts') }}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Reset all filters">
+            <i class="bi bi-x-lg"></i>
+          </a>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <!-- Preserve Active Tag if present -->
+      {% if selected_tag %}
+      <input type="hidden" name="tag" value="{{ selected_tag.name }}">
+      {% endif %}
+    </form>
+
+    <!-- Active Filters Badges Bar -->
+    {% if search_query or selected_category or selected_tag %}
+    <div class="d-flex flex-wrap align-items-center gap-2 mt-3 pt-3 border-top small">
+      <span class="text-muted fw-semibold">Active Filters:</span>
+      {% if search_query %}
+      <span class="badge bg-light text-dark border p-2">
+        Keyword: <strong>"{{ search_query }}"</strong>
+        <a href="{{ url_for('posts.all_posts', category=selected_category.id if selected_category else None, tag=selected_tag.name if selected_tag else None, sort=sort_by) }}" class="ms-1 text-danger">&times;</a>
+      </span>
+      {% endif %}
+
+      {% if selected_category %}
+      <span class="badge bg-primary-subtle text-primary p-2">
+        Category: <strong>{{ selected_category.name }}</strong>
+        <a href="{{ url_for('posts.all_posts', q=search_query, tag=selected_tag.name if selected_tag else None, sort=sort_by) }}" class="ms-1 text-danger">&times;</a>
+      </span>
+      {% endif %}
+
+      {% if selected_tag %}
+      <span class="badge bg-secondary-subtle text-secondary p-2">
+        Tag: <strong>#{{ selected_tag.name }}</strong>
+        <a href="{{ url_for('posts.all_posts', q=search_query, category=selected_category.id if selected_category else None, sort=sort_by) }}" class="ms-1 text-danger">&times;</a>
+      </span>
+      {% endif %}
+
+      <a href="{{ url_for('posts.all_posts') }}" class="btn btn-link btn-sm text-danger text-decoration-none p-0 ms-2">
+        Clear All
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Articles Grid -->
+  {% if posts %}
+  <div class="row g-4">
+    {% for post in posts %}
+      {% include 'components/post_card.html' %}
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% include 'components/pagination.html' %}
+
+  {% else %}
+  <!-- Empty State when No Search/Filter Results Found (Week 6 Requirement) -->
+  <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white my-4">
+    <div class="display-3 text-muted mb-3">
+      <i class="bi bi-search"></i>
+    </div>
+    <h4 class="fw-bold mb-2">No Matching Articles Found</h4>
+    <p class="text-muted mb-4">
+      We couldn't find any articles matching your search query or applied filters. Try adjusting keywords or clearing filters.
+    </p>
+    <div>
+      <a href="{{ url_for('posts.all_posts') }}" class="btn btn-primary-custom">
+        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset All Filters
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+

@@ -1,0 +1,57 @@
+<div class="col-md-6 col-lg-4 mb-4">
+  <div class="blog-card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        {% if post.category %}
+        <a href="{{ url_for('posts.category_view', category_id=post.category.id) }}" class="badge-category text-decoration-none">
+          <i class="bi bi-tag-fill"></i> {{ post.category.name }}
+        </a>
+        {% else %}
+        <span class="badge-category"><i class="bi bi-tag"></i> General</span>
+        {% endif %}
+        <span class="small text-muted"><i class="bi bi-clock me-1"></i>{{ post.reading_time }} min read</span>
+      </div>
+
+      <h5 class="post-card-title">
+        <a href="{{ url_for('posts.detail', post_id=post.id) }}">{{ post.title }}</a>
+      </h5>
+
+      <p class="post-card-summary">
+        {% if post.summary %}
+          {{ post.summary }}
+        {% else %}
+          {{ (post.content | striptags)[:130] }}...
+        {% endif %}
+      </p>
+
+      {% if post.tags %}
+      <div class="d-flex flex-wrap gap-1 mb-3">
+        {% for tag in post.tags[:3] %}
+        <a href="{{ url_for('posts.tag_view', name=tag.name) }}" class="badge-tag">
+          #{{ tag.name }}
+        </a>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="post-meta mt-auto">
+        <div class="author-chip">
+          <img src="{{ post.author.avatar(32) }}" alt="{{ post.author.username }}" class="author-avatar-sm">
+          <div>
+            <a href="{{ url_for('auth.author_profile', username=post.author.username) }}" class="text-dark fw-semibold text-decoration-none small">
+              {{ post.author.username }}
+            </a>
+            <div class="text-muted" style="font-size: 0.75rem;">
+              {{ post.created_at | format_date }}
+            </div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2 text-muted small">
+          <span><i class="bi bi-eye"></i> {{ post.views }}</span>
+          <span><i class="bi bi-chat-text"></i> {{ post.comments.count() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

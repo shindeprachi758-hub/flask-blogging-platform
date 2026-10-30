@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} - BlogCraft{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+
+      <!-- Breadcrumb Navigation -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb small">
+          <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('posts.all_posts') }}">Articles</a></li>
+          {% if post.category %}
+          <li class="breadcrumb-item">
+            <a href="{{ url_for('posts.category_view', category_id=post.category.id) }}">{{ post.category.name }}</a>
+          </li>
+          {% endif %}
+          <li class="breadcrumb-item active text-truncate" style="max-width: 250px;" aria-current="page">{{ post.title }}</li>
+        </ol>
+      </nav>
+
+      <!-- Article Header -->
+      <article class="bg-white rounded-4 p-4 p-md-5 border shadow-sm mb-5">
+        <header class="article-header">
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            {% if post.category %}
+            <a href="{{ url_for('posts.category_view', category_id=post.category.id) }}" class="badge-category text-decoration-none">
+              <i class="bi bi-folder-fill me-1"></i> {{ post.category.name }}
+            </a>
+            {% endif %}
+            <span class="text-muted small"><i class="bi bi-clock me-1"></i> {{ post.reading_time }} min read</span>
+            <span class="text-muted small"><i class="bi bi-eye me-1"></i> {{ post.views }} views</span>
+          </div>
+
+          <h1 class="article-title mb-4">{{ post.title }}</h1>
+
+          {% if post.summary %}
+          <div class="lead text-secondary mb-4 p-3 bg-light rounded-3 border-start border-4 border-primary">
+            {{ post.summary }}
+          </div>
+          {% endif %}
+
+          <!-- Author Info & Metadata Bar -->
+          <div class="d-flex flex-wrap justify-content-between align-items-center pb-4 border-bottom gap-3">
+            <div class="author-chip">
+              <img src="{{ post.author.avatar(52) }}" alt="{{ post.author.username }}" class="author-avatar-sm" style="width: 52px; height: 52px;">
+              <div>
+                <a href="{{ url_for('auth.author_profile', username=post.author.username) }}" class="text-dark fw-bold text-decoration-none">
+                  {{ post.author.username }}
+                </a>
+                <div class="text-muted small">
+                  Published on {{ post.created_at | format_date }}
+                  {% if post.updated_at and post.updated_at != post.created_at %}
+                    <span class="ms-1">(Updated {{ post.updated_at | format_date }})</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Author Controls (Edit & Delete with Confirmation) -->
+            {% if current_user.is_authenticated and (current_user.id == post.user_id or current_user.is_admin) %}
+            <div class="d-flex gap-2">
+              <a href="{{ url_for('posts.edit', post_id=post.id) }}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-pencil me-1"></i> Edit
+              </a>
+              <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deletePostModal">
+                <i class="bi bi-trash me-1"></i> Delete
+              </button>
+
+              <!-- Delete Post Confirmation Modal -->
+              <div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header border-0 pb-0">
+                      <h5 class="modal-title fw-bold text-danger" id="deletePostModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Post Confirmation
+                      </h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-start py-3">
+                      <p class="mb-2">Are you certain you want to delete this blog post?</p>
+                      <div class="p-2 bg-light rounded border fw-semibold mb-2">"{{ post.title }}"</div>
+                      <p class="text-danger small mb-0">This permanently removes the article and its associated comments from the database.</p>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                      <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                      <form action="{{ url_for('posts.delete', post_id=post.id) }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger">Yes, Delete Post</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </header>
+
+        <!-- Sanitized Article Body -->
+        <div class="article-content py-4">
+          {{ post.sanitized_content | safe }}
+        </div>
+
+        <!-- Post Tags -->
+        {% if post.tags %}
+        <div class="pt-4 border-top">
+          <h6 class="fw-bold text-muted small text-uppercase mb-2">Related Tags:</h6>
+          <div class="d-flex flex-wrap gap-2">
+            {% for tag in post.tags %}
+            <a href="{{ url_for('posts.tag_view', name=tag.name) }}" class="badge-tag py-2 px-3 fs-6">
+              #{{ tag.name }}
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </article>
+
+      <!-- Author Bio Box -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 mb-5 bg-white">
+        <div class="d-flex align-items-center gap-3">
+          <img src="{{ post.author.avatar(64) }}" alt="{{ post.author.username }}" class="rounded-circle border" style="width: 64px; height: 64px;">
+          <div>
+            <span class="text-muted small text-uppercase fw-semibold">Written by</span>
+            <h5 class="fw-bold mb-1">
+              <a href="{{ url_for('auth.author_profile', username=post.author.username) }}" class="text-dark text-decoration-none">
+                {{ post.author.username }}
+              </a>
+            </h5>
+            <p class="text-secondary small mb-0">
+              {{ post.author.bio or 'Full-stack software developer sharing articles on modern web technologies and engineering principles.' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments Section (Week 5 Requirement) -->
+      <section id="comments" class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="fw-bold mb-0">
+            <i class="bi bi-chat-text text-primary me-2"></i>Comments ({{ post.comments.count() }})
+          </h3>
+        </div>
+
+        <!-- Comment Form -->
+        {% if current_user.is_authenticated %}
+        <div class="mb-5 p-3 p-md-4 rounded-3 bg-light border">
+          <div class="d-flex gap-3 align-items-center mb-3">
+            <img src="{{ current_user.avatar(36) }}" alt="{{ current_user.username }}" class="author-avatar-sm" style="width: 36px; height: 36px;">
+            <span class="fw-semibold">Commenting as <strong>{{ current_user.username }}</strong></span>
+          </div>
+          <form action="{{ url_for('comments.add_comment', post_id=post.id) }}" method="POST">
+            {{ comment_form.hidden_tag() }}
+            <div class="mb-3">
+              {{ comment_form.content(class="form-control bg-white", rows=3, placeholder="Share your perspective or ask a question...") }}
+            </div>
+            <div class="text-end">
+              <button type="submit" class="btn btn-primary-custom btn-sm">
+                <i class="bi bi-send me-1"></i> Post Comment
+              </button>
+            </div>
+          </form>
+        </div>
+        {% else %}
+        <div class="alert alert-light border text-center p-4 rounded-3 mb-5">
+          <i class="bi bi-chat-heart fs-2 text-primary d-block mb-2"></i>
+          <h6 class="fw-bold">Join the Conversation</h6>
+          <p class="text-muted small mb-3">Sign in or create an account to share your thoughts on this article.</p>
+          <a href="{{ url_for('auth.login', next=request.path) }}" class="btn btn-primary-custom btn-sm">
+            Sign In to Comment
+          </a>
+        </div>
+        {% endif %}
+
+        <!-- Comments List -->
+        {% if post.comments.count() > 0 %}
+        <div class="comments-list">
+          {% for comment in post.comments %}
+          <div class="comment-card">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div class="d-flex align-items-center gap-2">
+                <img src="{{ comment.author.avatar(36) }}" alt="{{ comment.author.username }}" class="author-avatar-sm">
+                <div>
+                  <a href="{{ url_for('auth.author_profile', username=comment.author.username) }}" class="fw-bold text-dark text-decoration-none small">
+                    {{ comment.author.username }}
+                  </a>
+                  <div class="text-muted" style="font-size: 0.75rem;">
+                    {{ comment.created_at | format_date }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Delete Comment Action (Comment Author or Post Author) -->
+              {% if current_user.is_authenticated and (comment.author == current_user or post.author == current_user or current_user.is_admin) %}
+              <form action="{{ url_for('comments.delete_comment', comment_id=comment.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-link text-danger p-0 small" data-bs-toggle="tooltip" title="Delete comment">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+              {% endif %}
+            </div>
+            <div class="text-secondary small mt-2 ps-1">
+              {{ comment.sanitized_content | safe }}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-chat-square-dots fs-3 d-block mb-2 text-secondary"></i>
+          <p class="small mb-0">No comments yet. Be the first to start the discussion!</p>
+        </div>
+        {% endif %}
+
+      </section>
+
+      <!-- Related Posts -->
+      {% if related_posts %}
+      <div class="mb-5">
+        <h4 class="fw-bold mb-3">More from {{ post.category.name if post.category else 'BlogCraft' }}</h4>
+        <div class="row g-3">
+          {% for rpost in related_posts %}
+          <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm p-3 rounded-3 bg-white">
+              <span class="small text-muted mb-1"><i class="bi bi-clock me-1"></i>{{ rpost.reading_time }} min read</span>
+              <h6 class="fw-bold">
+                <a href="{{ url_for('posts.detail', post_id=rpost.id) }}" class="text-dark text-decoration-none">
+                  {{ rpost.title }}
+                </a>
+              </h6>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+

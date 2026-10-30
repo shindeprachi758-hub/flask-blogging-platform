@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Profile Settings - BlogCraft{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="form-card">
+        <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+          <img src="{{ user.avatar(72) }}" alt="{{ user.username }}" class="rounded-circle border" style="width: 72px; height: 72px;">
+          <div>
+            <h3 class="fw-bold mb-1">{{ user.username }}</h3>
+            <p class="text-muted small mb-0">Member since {{ user.created_at | format_date }}</p>
+          </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.profile') }}" novalidate>
+          {{ form.hidden_tag() }}
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="username" class="form-label fw-semibold small text-muted">Username</label>
+              {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), id="username") }}
+              {% for error in form.username.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="col-md-6">
+              <label for="email" class="form-label fw-semibold small text-muted">Email Address</label>
+              {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), id="email") }}
+              {% for error in form.email.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="bio" class="form-label fw-semibold small text-muted">Author Bio / About Me</label>
+            {{ form.bio(class="form-control" + (" is-invalid" if form.bio.errors else ""), rows=4, id="bio", placeholder="Tell readers about your background, tech stack, and interests...") }}
+            {% for error in form.bio.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+            <div class="form-text small">Max 300 characters. Displays on all your articles and author profile.</div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="{{ url_for('auth.dashboard') }}" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+            </a>
+            <button type="submit" class="btn btn-primary-custom">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

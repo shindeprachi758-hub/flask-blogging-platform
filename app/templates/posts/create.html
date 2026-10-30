@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Create New Article - BlogCraft{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="fw-bold mb-1">Create New Article</h2>
+          <p class="text-muted small mb-0">Compose and publish your insights to the engineering community.</p>
+        </div>
+        <a href="{{ url_for('auth.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+      </div>
+
+      <!-- Create Post Form Card -->
+      <div class="form-card">
+        <form method="POST" action="{{ url_for('posts.create') }}" id="postForm" novalidate>
+          {{ form.hidden_tag() }}
+
+          <!-- Title -->
+          <div class="mb-3">
+            <label for="title" class="form-label fw-bold small text-muted">Article Title</label>
+            {{ form.title(class="form-control form-control-lg" + (" is-invalid" if form.title.errors else ""), placeholder="e.g. Modern Full-Stack Development with Flask 3", id="title", autofocus=True) }}
+            {% for error in form.title.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Summary -->
+          <div class="mb-3">
+            <label for="summary" class="form-label fw-bold small text-muted">Article Summary / Excerpt</label>
+            {{ form.summary(class="form-control" + (" is-invalid" if form.summary.errors else ""), placeholder="A brief one or two sentence teaser for the card overview...", id="summary") }}
+            {% for error in form.summary.errors %}
+              <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+            <div class="form-text small">Optional (max 300 characters). Displayed on article preview cards.</div>
+          </div>
+
+          <!-- Category & Tags Grid -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="category_id" class="form-label fw-bold small text-muted mb-0">Category</label>
+                <a href="{{ url_for('posts.new_category') }}" class="small text-primary text-decoration-none">
+                  <i class="bi bi-plus"></i> New Category
+                </a>
+              </div>
+              {{ form.category_id(class="form-select" + (" is-invalid" if form.category_id.errors else ""), id="category_id") }}
+              {% for error in form.category_id.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="col-md-6">
+              <label for="tags" class="form-label fw-bold small text-muted">Tags (Comma-Separated)</label>
+              {{ form.tags(class="form-control" + (" is-invalid" if form.tags.errors else ""), placeholder="e.g. python, flask, tutorial", id="tags") }}
+              {% for error in form.tags.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+              <div class="form-text small">Enter keywords separated by commas.</div>
+            </div>
+          </div>
+
+          <!-- Quill Rich Text Editor Container (Week 3 Requirement) -->
+          <div class="mb-4">
+            <label class="form-label fw-bold small text-muted">Article Body (Rich Text Editor)</label>
+
+            <!-- Quill Editor Mount Point -->
+            <div id="editor-container" class="bg-white"></div>
+
+            <!-- Hidden Form Textarea synced on submit -->
+            {{ form.content(id="content-textarea", style="display:none;") }}
+
+            {% for error in form.content.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+            {% endfor %}
+            <div class="form-text small mt-2">
+              <i class="bi bi-shield-check text-success me-1"></i> Content is automatically sanitized to protect against cross-site scripting (XSS).
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+            <a href="{{ url_for('auth.dashboard') }}" class="btn btn-outline-secondary">
+              Cancel
+            </a>
+            <button type="submit" class="btn btn-primary-custom px-4">
+              <i class="bi bi-check2-circle me-1"></i> Publish Article
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+

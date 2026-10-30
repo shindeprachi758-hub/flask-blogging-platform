@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}{{ author.username }} - Author Profile - BlogCraft{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Author Header -->
+  <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-5 bg-white">
+    <div class="row align-items-center">
+      <div class="col-md-auto text-center mb-3 mb-md-0">
+        <img src="{{ author.avatar(100) }}" alt="{{ author.username }}" class="rounded-circle border shadow-sm" style="width: 100px; height: 100px;">
+      </div>
+      <div class="col-md">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <h2 class="fw-bold mb-0">{{ author.username }}</h2>
+          {% if author.is_admin %}
+            <span class="badge bg-danger-subtle text-danger"><i class="bi bi-shield-check"></i> Admin</span>
+          {% endif %}
+        </div>
+        <p class="text-muted mb-2">Member since {{ author.created_at | format_date }}</p>
+        <p class="mb-0 text-secondary">
+          {{ author.bio or 'This author has not provided a biography yet.' }}
+        </p>
+      </div>
+      <div class="col-md-auto text-md-end mt-3 mt-md-0">
+        <div class="badge bg-primary-subtle text-primary p-3 rounded-3">
+          <div class="fs-4 fw-bold">{{ posts.total }}</div>
+          <div class="small text-uppercase fw-semibold">Articles</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authored Posts List -->
+  <h4 class="fw-bold mb-4">Articles by {{ author.username }}</h4>
+
+  {% if posts.items %}
+  <div class="row g-4">
+    {% for post in posts.items %}
+      {% include 'components/post_card.html' %}
+    {% endfor %}
+  </div>
+
+  {% if posts.pages > 1 %}
+    {% include 'components/pagination.html' %}
+  {% endif %}
+
+  {% else %}
+  <div class="text-center py-5 bg-white rounded-4 border">
+    <p class="text-muted mb-0">No published articles found for this author.</p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
